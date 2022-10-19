@@ -3,6 +3,8 @@ from torch import nn
 
 # Define a neural network YOUR ROLL NUMBER (all small letters) should prefix the classname
 
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
 
 class cs19b011NN(nn.Module):
     # ... your code ...
@@ -26,24 +28,40 @@ class cs19b011NN(nn.Module):
         x = self.conv2(x)
         x = self.relu2(x)
         x = self.flatten(x)
+        print(x.shape)
         x = self.fc1(x)
         x = self.softmax(x)
         return x
+
+class cs19b011AdvancedNN(nn.Module):
+    def __init__(self,modules_list,num_classes):
+        super().__init__()
+        self.linears = nn.ModuleList(modules_list)
+        self.flatten = nn.Flatten()
+        # self.fc1 = nn.Linear(in_features=w*h*20, out_features=num_classes)
+
+    def forward(self, x):
+        for i in range(len(self.linears)):
+            x = self.layers[i](x)
+        x=self.flatten(x)
+        print(x.shape)
 
 # sample invocation torch.hub.load(myrepo,'get_model',train_data_loader=train_data_loader,n_epochs=5, force_reload=True)
 
 
 def get_model(train_data_loader=None, n_epochs=10):
-  model = cs19b011NN()  
-  
-  print ('Returning model... (rollnumber: 11)')
-  
-  return model
 
-# sample invocation torch.hub.load(myrepo,'get_model_advanced',train_data_loader=train_data_loader,n_epochs=5, force_reload=True)
+    # write your code here as per instructions
+    # ... your code ...
+    # ... your code ...
+    # ... and so on ...
+    # Use softmax and cross entropy loss functions
+    # set model variable to proper object, make use of train_data
 
+    # print(train_data_loader.dataset)
+    # print(train_data_loader)
+    # print(len(train_data_loader.dataset))
 
-def get_model_advanced(train_data_loader=None, n_epochs=10, lr=1e-4, config=None):
     w = 0
     h = 0
     num_channels = 0
@@ -78,13 +96,29 @@ def get_model_advanced(train_data_loader=None, n_epochs=10, lr=1e-4, config=None
 
             train_loss += loss
             correct += (ypred.argmax(1) == y).type(torch.float).sum().item()
-        print("Epoch:", epoch, "loss:", train_loss)
         print("Epoch", epoch, "accuracy:",
               correct/len(train_data_loader.dataset))
 
-    print('Returning model... (rollnumber: 11)')
+    print('Returning model... (rollnumber: cs19b011)')
 
     return model1
+
+# sample invocation torch.hub.load(myrepo,'get_model_advanced',train_data_loader=train_data_loader,n_epochs=5, force_reload=True)
+
+
+def get_model_advanced(train_data_loader=None, n_epochs=10, lr=1e-4, config=None):
+
+    modules_list=[]
+    if(config is not None):
+        for module in config:
+            modules_list.append(nn.Conv2d(in_channels=module[0], out_channels=module[1],kernel_size=module[2], stride=module[3], padding=module[4]))
+
+    model1=cs19b011AdvancedNN(modules_list=modules_list,).to(device)
+    return model1
+
+    print('Returning model... (rollnumber: cs19b011)')
+
+    return model
 
 # sample invocation torch.hub.load(myrepo,'test_model',model1=model,test_data_loader=test_data_loader,force_reload=True)
 
