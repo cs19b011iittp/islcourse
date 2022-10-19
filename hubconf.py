@@ -44,41 +44,47 @@ def get_model(train_data_loader=None, n_epochs=10):
 
 
 def get_model_advanced(train_data_loader=None, n_epochs=10, lr=1e-4, config=None):
-  iter = 0
-  
+    w = 0
+    h = 0
+    num_channels = 0
+    num_classes = 0
+    for (X, y) in train_data_loader:
+        # print(X.shape)
+        # print(y.shape)
+        num_channels = X.shape[1]
+        w = X.shape[2]
+        h = X.shape[3]
+        num_classes = torch.max(y).item()-torch.min(y).item()+1
+        break
 
-  for epoch in range(n_epochs):
+    model1 = cs19b037NN(num_channels, w, h, num_classes).to(device)
 
-    model = get_model()
-    criterion = nn.CrossEntropyLoss()
-    learning_rate = lr
-    optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
+    optimizer = torch.optim.SGD(model1.parameters(), lr=1e-3)
+    loss_fn = nn.CrossEntropyLoss()
 
-    for i, (images, labels) in enumerate(train_data_loader):
-        # Load images as tensors with gradient accumulation abilities
-        images = images.requires_grad_()
+    # training
+    for epoch in range(n_epochs):
+        model1.train()
+        train_loss = 0
+        correct = 0
+        for batch, (X, y) in enumerate(train_data_loader):
+            X, y = X.to(device), y.to(device)
+            ypred = model1(X)
+            loss = loss_fn(ypred, y)
 
-        # Clear gradients w.r.t. parameters
-        optimizer.zero_grad()
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
 
-        # Forward pass to get output/logits
-        outputs = model(images)
+            train_loss += loss
+            correct += (ypred.argmax(1) == y).type(torch.float).sum().item()
+        print("Epoch:", epoch, "loss:", train_loss)
+        print("Epoch", epoch, "accuracy:",
+              correct/len(train_data_loader.dataset))
 
-        # Calculate Loss: softmax --> cross entropy loss
-        loss = criterion(outputs, labels)
+    print('Returning model... (rollnumber: cs19b037)')
 
-        # Getting gradients w.r.t. parameters
-        loss.backward()
-
-        # Updating parameters
-        optimizer.step()
-
-  
-  iter+=1
-
-  print ('Returning model... (rollnumber: 11)')
-  
-  return model
+    return model1
 
 # sample invocation torch.hub.load(myrepo,'test_model',model1=model,test_data_loader=test_data_loader,force_reload=True)
 
