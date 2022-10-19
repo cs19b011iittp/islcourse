@@ -45,9 +45,9 @@ def get_dataloaders(train_data, test_data):
     return loaders
 
 
-class CNN(nn.Module):
+class cs19b011NN(nn.Module):
     def __init__(self):
-        super(CNN, self).__init__()
+        super(cs19b011NN, self).__init__()
         self.conv1 = nn.Sequential(         
             nn.Conv2d(
                 in_channels=1,              
@@ -75,10 +75,10 @@ class CNN(nn.Module):
         return output, x    # return x for visualization
 
 def get_model_advanced(train_data_loader=None, n_epochs=10,lr=1e-4,config=None):
-    cnn = CNN()
+    model = cs19b011NN()
     loss_func = nn.CrossEntropyLoss()   
     optimizer = optim.Adam(cnn.parameters(), lr = 0.01)   
-    return cnn, loss_func, optimizer
+    return model
 
     
 
@@ -120,13 +120,7 @@ def train(cnn, loss_func, optimizer, loaders, num_epochs):
 
 
 def test_model(model1=None, test_data_loader=None):
-
   accuracy_val, precision_val, recall_val, f1score_val = 0, 0, 0, 0
-  # write your code here as per instructions
-  # ... your code ...
-  # ... your code ...
-  # ... and so on ...
-  # calculate accuracy, precision, recall and f1score
   print(test_data_loader)
   size = len(test_data_loader.dataset)
   num_batches = len(test_data_loader)
@@ -143,6 +137,5 @@ def test_model(model1=None, test_data_loader=None):
   correct /= size
   print(f"Test Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")
   print ('Returning metrics... (rollnumber: cs19b011)')
-  
-  
+    
   return accuracy_val, precision_val, recall_val, f1score_val
