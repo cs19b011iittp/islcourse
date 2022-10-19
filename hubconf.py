@@ -11,8 +11,8 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 
-class cs19b015NN(nn.Module):
-    def __init__(cs19b015NN, self, input, output, kernel, strid, pad):
+class cs19b011NN(nn.Module):
+    def __init__(cs19b011NN, self, input, output, kernel, strid, pad):
 
         # Convolution 1
         self.cnn1 = nn.Conv2d(in_channels=self.input, out_channels=self.output, kernel_size=self.kernel, stride=self.strid, padding=self.pad)
@@ -41,7 +41,7 @@ class cs19b015NN(nn.Module):
 
 # sample invocation torch.hub.load(myrepo,'get_model',train_data_loader=train_data_loader,n_epochs=5, force_reload=True)
 def get_model(train_data_loader=None, n_epochs=10):
-  model = cs19b015NN()  
+  model = cs19b011NN()  
   
   print ('Returning model... (rollnumber: xx)')
   
