@@ -8,7 +8,6 @@ import torch.nn as nn
 from torch import optim
 from torch.autograd import Variable
 
-# Device configuration
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
@@ -72,6 +71,10 @@ class cs19b011NN(nn.Module):
         x = x.view(x.size(0), -1)       
         output = self.out(x)
         return output, x
+    
+def get_model():
+    model = cs19b011NN()
+    return model
 
 def get_model_advanced(train_data_loader=None, n_epochs=10,lr=1e-4,config=None):
     model = cs19b011NN()
