@@ -57,7 +57,7 @@ def get_model_advanced(train_data_loader=None, n_epochs=10, lr=1e-4, config=None
         num_classes = torch.max(y).item()-torch.min(y).item()+1
         break
 
-    model1 = cs19b037NN(num_channels, w, h, num_classes).to(device)
+    model1 = cs19b011NN(num_channels, w, h, num_classes).to(device)
 
     optimizer = torch.optim.SGD(model1.parameters(), lr=1e-3)
     loss_fn = nn.CrossEntropyLoss()
@@ -82,7 +82,7 @@ def get_model_advanced(train_data_loader=None, n_epochs=10, lr=1e-4, config=None
         print("Epoch", epoch, "accuracy:",
               correct/len(train_data_loader.dataset))
 
-    print('Returning model... (rollnumber: cs19b037)')
+    print('Returning model... (rollnumber: 11)')
 
     return model1
 
