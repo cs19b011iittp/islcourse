@@ -59,20 +59,21 @@ class cs19b011NN(nn.Module):
             nn.ReLU(),                      
             nn.MaxPool2d(kernel_size=2),    
         )
+        
         self.conv2 = nn.Sequential(         
             nn.Conv2d(16, 32, 5, 1, 2),     
             nn.ReLU(),                      
             nn.MaxPool2d(2),                
         )
-        # fully connected layer, output 10 classes
         self.out = nn.Linear(32 * 7 * 7, 10)
+        
     def forward(self, x):
         x = self.conv1(x)
         x = self.conv2(x)
         # flatten the output of conv2 to (batch_size, 32 * 7 * 7)
         x = x.view(x.size(0), -1)       
         output = self.out(x)
-        return output, x    # return x for visualization
+        return output, x
 
 def get_model_advanced(train_data_loader=None, n_epochs=10,lr=1e-4,config=None):
     model = cs19b011NN()
@@ -80,14 +81,10 @@ def get_model_advanced(train_data_loader=None, n_epochs=10,lr=1e-4,config=None):
     optimizer = optim.Adam(model.parameters(), lr = 0.01)   
     print("returning model - roll no: cs19b011")
     return model
-
     
 
 def train(cnn, loss_func, optimizer, loaders, num_epochs):
-    # num_epochs = 10
     cnn.train()
-        
-    # Train the model
     total_step = len(loaders['train'])
         
     for epoch in range(num_epochs):
