@@ -77,7 +77,7 @@ class cs19b011NN(nn.Module):
 def get_model_advanced(train_data_loader=None, n_epochs=10,lr=1e-4,config=None):
     model = cs19b011NN()
     loss_func = nn.CrossEntropyLoss()   
-    optimizer = optim.Adam(cnn.parameters(), lr = 0.01)   
+    optimizer = optim.Adam(model.parameters(), lr = 0.01)   
     return model
 
     
