@@ -1,5 +1,3 @@
-# Debeshee
-
 dependencies = ['torch']
 
 import torch
@@ -89,19 +87,15 @@ def train(cnn, loss_func, optimizer, loaders, num_epochs):
         
     for epoch in range(num_epochs):
         for i, (images, labels) in enumerate(loaders['train']):
-            
-            # gives batch data, normalize x when iterate train_loader
+
             b_x = Variable(images)   # batch x
             b_y = Variable(labels)   # batch y
             output = cnn(b_x)[0]               
             loss = loss_func(output, b_y)
-            
-            # clear gradients for this training step   
+  
             optimizer.zero_grad()           
-            
-            # backpropagation, compute gradients 
-            loss.backward()    
-            # apply gradients             
+
+            loss.backward()                
             optimizer.step()                
             
             if (i+1) % 100 == 0:
