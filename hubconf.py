@@ -10,7 +10,7 @@ from torch.autograd import Variable
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-
+# loading data
 def load_data():
 
     train_data = datasets.FashionMNIST(
@@ -70,11 +70,14 @@ class cs19b011NN(nn.Module):
         x = x.view(x.size(0), -1)       
         output = self.out(x)
         return output, x
-    
+ 
+
+# get model method
 def get_model(train_data_loader=None, n_epochs=10):
     model = cs19b011NN()
     return model
 
+# get model advanced method
 def get_model_advanced(train_data_loader=None, n_epochs=10,lr=1e-4,config=None):
     model = cs19b011NN()
     loss_func = nn.CrossEntropyLoss()   
@@ -82,7 +85,7 @@ def get_model_advanced(train_data_loader=None, n_epochs=10,lr=1e-4,config=None):
     print("returning model - roll no: cs19b011")
     return model
     
-
+# train model method
 def train(cnn, loss_func, optimizer, loaders, num_epochs):
     cnn.train()
     total_step = len(loaders['train'])
@@ -112,7 +115,7 @@ def train(cnn, loss_func, optimizer, loaders, num_epochs):
     PATH = './saved_models/FMNIST_model.pth'
     torch.save(cnn.state_dict(), PATH)
 
-
+# test model method
 def test_model(model1=None, test_data_loader=None):
   accuracy_val, precision_val, recall_val, f1score_val = 0, 0, 0, 0
   print(test_data_loader)
