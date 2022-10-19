@@ -34,20 +34,11 @@ class cs19b011NN(nn.Module):
 
 
 def get_model(train_data_loader=None, n_epochs=10):
-    model = None
-
-    # write your code here as per instructions
-    # ... your code ...
-    # ... your code ...
-    # ... and so on ...
-    # Use softmax and cross entropy loss functions
-    # set model variable to proper object, make use of train_data
-
-    print(train_data_loader.dataset)
-
-    print('Returning model... (rollnumber: cs19b037)')
-
-    return model
+  model = cs19b011NN()  
+  
+  print ('Returning model... (rollnumber: 11)')
+  
+  return model
 
 # sample invocation torch.hub.load(myrepo,'get_model_advanced',train_data_loader=train_data_loader,n_epochs=5, force_reload=True)
 
