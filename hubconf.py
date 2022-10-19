@@ -1,67 +1,124 @@
+# Debeshee
+
+dependencies = ['torch']
+
 import torch
-from torch import nn
-from torch.utils.data import DataLoader
 from torchvision import datasets
 from torchvision.transforms import ToTensor
+from torch.utils.data import DataLoader
+import torch.nn as nn
+from torch import optim
+from torch.autograd import Variable
+
+# Device configuration
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
-def kali():
-  print('kali')
+def load_data():
 
-# Define a neural network YOUR ROLL NUMBER (all small letters) should prefix the classname
-device = "cuda" if torch.cuda.is_available() else "cpu"
-print(f"Using {device} device")
+    train_data = datasets.FashionMNIST(
+    root = 'data',
+    train = True,                         
+    transform = ToTensor(), 
+    download = True,            
+    )
+    test_data = datasets.FashionMNIST(
+        root = 'data', 
+        train = False, 
+        transform = ToTensor()
+    )
 
-loss_fn = nn.CrossEntropyLoss()
-# optimizer = torch.optim.SGD(model.parameters(), lr=1e-3)
+    return train_data, test_data
+    
+def get_dataloaders(train_data, test_data):
+    loaders = {
+    'train' : torch.utils.data.DataLoader(train_data, 
+                                          batch_size=100, 
+                                          shuffle=True, 
+                                          num_workers=1),
+    
+    'test'  : torch.utils.data.DataLoader(test_data, 
+                                          batch_size=100, 
+                                          shuffle=True, 
+                                          num_workers=1),
+    }
+    return loaders
 
-class cs19b011NN(nn.Module):
-  # pass
-  # ... your code ...
-  # ... write init and forward functions appropriately ...
+
+class CNN(nn.Module):
     def __init__(self):
-        super(cs19b011NN, self).__init__()
-        self.flatten = nn.Flatten()
-        self.linear_relu_stack = nn.Sequential(
-            nn.Linear(28*28, 512),
-            nn.ReLU(),
-            nn.Linear(512, 512),
-            nn.ReLU(),
-            nn.Linear(512, 10)
-            
+        super(CNN, self).__init__()
+        self.conv1 = nn.Sequential(         
+            nn.Conv2d(
+                in_channels=1,              
+                out_channels=16,            
+                kernel_size=5,              
+                stride=1,                   
+                padding=2,                  
+            ),                              
+            nn.ReLU(),                      
+            nn.MaxPool2d(kernel_size=2),    
         )
-        self.softmax = torch.nn.Softmax()
-
+        self.conv2 = nn.Sequential(         
+            nn.Conv2d(16, 32, 5, 1, 2),     
+            nn.ReLU(),                      
+            nn.MaxPool2d(2),                
+        )
+        # fully connected layer, output 10 classes
+        self.out = nn.Linear(32 * 7 * 7, 10)
     def forward(self, x):
-        x = self.flatten(x)
-        logits = self.linear_relu_stack(x)
-        return logits
+        x = self.conv1(x)
+        x = self.conv2(x)
+        # flatten the output of conv2 to (batch_size, 32 * 7 * 7)
+        x = x.view(x.size(0), -1)       
+        output = self.out(x)
+        return output, x    # return x for visualization
+
+def get_model_advanced():
+    cnn = CNN()
+    loss_func = nn.CrossEntropyLoss()   
+    optimizer = optim.Adam(cnn.parameters(), lr = 0.01)   
+    return cnn, loss_func, optimizer
+
     
-# sample invocation torch.hub.load(myrepo,'get_model',train_data_loader=train_data_loader,n_epochs=5, force_reload=True)
-def get_model(train_data_loader=None, n_epochs=10):
-  # model = None
 
-  # write your code here as per instructions
-  # ... your code ...
-  # ... your code ...
-  # ... and so on ...
-  # Use softmax and cross entropy loss functions
-  # set model variable to proper object, make use of train_data
-  model = cs19b011NN().to(device)
-  
-  print ('Returning model... (rollnumber: 11)', model)
-  
-  return model
-
-# sample invocation torch.hub.load(myrepo,'get_model_advanced',train_data_loader=train_data_loader,n_epochs=5, force_reload=True)
-def get_model_advanced(train_data_loader=None, n_epochs=10,lr=1e-4,config=None):
-  model = None
+def train(cnn, loss_func, optimizer, loaders, num_epochs):
+    # num_epochs = 10
+    cnn.train()
+        
+    # Train the model
+    total_step = len(loaders['train'])
+        
+    for epoch in range(num_epochs):
+        for i, (images, labels) in enumerate(loaders['train']):
+            
+            # gives batch data, normalize x when iterate train_loader
+            b_x = Variable(images)   # batch x
+            b_y = Variable(labels)   # batch y
+            output = cnn(b_x)[0]               
+            loss = loss_func(output, b_y)
+            
+            # clear gradients for this training step   
+            optimizer.zero_grad()           
+            
+            # backpropagation, compute gradients 
+            loss.backward()    
+            # apply gradients             
+            optimizer.step()                
+            
+            if (i+1) % 100 == 0:
+                print ('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}' 
+                       .format(epoch + 1, num_epochs, i + 1, total_step, loss.item()))
+            pass
+        
+        pass
     
-  print ('Returning model... (rollnumber: 11)')
-  
-  return model
+    
+    pass
+    PATH = './saved_models/FMNIST_model.pth'
+    torch.save(cnn.state_dict(), PATH)
 
-# sample invocation torch.hub.load(myrepo,'test_model',model1=model,test_data_loader=test_data_loader,force_reload=True)
+
 def test_model(model1=None, test_data_loader=None):
 
   accuracy_val, precision_val, recall_val, f1score_val = 0, 0, 0, 0
@@ -85,7 +142,7 @@ def test_model(model1=None, test_data_loader=None):
   test_loss /= num_batches
   correct /= size
   print(f"Test Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")
-  print ('Returning metrics... (rollnumber: cs03)')
+  print ('Returning metrics... (rollnumber: cs19b011)')
   
   
   return accuracy_val, precision_val, recall_val, f1score_val
