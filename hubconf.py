@@ -70,7 +70,7 @@ class cs19b011(nn.Module):
         self.fc2 = nn.Linear(120, 10)
 
     def forward(self, x):
-        x = torch.flatten(x, 1) # flatten all dimensions except batch
+        x = torch.flatten(x, 1)
         x = F.relu(self.fc1(x))
         x = self.fc2(x)
         x = self.m(x)
