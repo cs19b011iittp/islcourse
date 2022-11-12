@@ -11,8 +11,8 @@ Original file is located at
 ### Exercise 3
 """
 
-!pip install torchmetrics
-!pip install torch
+#!pip install torchmetrics
+#!pip install torch
 
 import torch
 from torch import nn
