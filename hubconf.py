@@ -27,7 +27,7 @@ import numpy as np
 from sklearn.metrics import precision_recall_fscore_support
 from torchmetrics import Precision, Recall, F1Score, Accuracy
 
-!pip install torchmetrics
+#!pip install torchmetrics
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 print(f"Using {device} device")
