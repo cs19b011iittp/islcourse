@@ -124,7 +124,7 @@ from sklearn.metrics import recall_score
 import numpy as np
 from sklearn.metrics import precision_recall_fscore_support
 
-!pip install torchmetrics
+#!pip install torchmetrics
 
 from torchmetrics import Precision, Recall, F1Score, Accuracy
 
