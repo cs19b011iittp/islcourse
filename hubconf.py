@@ -74,8 +74,8 @@ class cs19b011_cnn(nn.Module):
         self.fm1 = 24 
         self.relu1 = nn.ReLU()
         self.conv2 = nn.Conv2d(in_channels=20, out_channels=50, kernel_size=(5, 5))
-        #self.relu2=nn.ReLU()
-        #self.flatten = nn.Flatten()
+        self.relu2=nn.ReLU()
+        self.flatten = nn.Flatten()
         self.fm2 =20
         self.fc1= nn.Linear(in_features=(50*self.fm2*self.fm2), out_features=10)
         self.logSoftmax = nn.Softmax(dim=1)
