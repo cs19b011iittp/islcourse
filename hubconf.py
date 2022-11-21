@@ -94,3 +94,89 @@ def build_kmeans(X=None,k=10):
 
   kmeans.labels_
   return kmeans
+
+
+def assign_kmeans(km=None,X=None):
+  pass
+  # For each of the points in X, assign one of the means
+  # refer to predict() function of the KMeans in sklearn
+  # write your code ...
+  from keras.datasets import mnist
+
+  (x_train, y_train), (x_test, y_test) = mnist.load_data()
+  kmeans = build_kmeans()
+  X = x_train.reshape(len(x_train),-1)
+  Y = y_train
+  X = X.astype(float) / 255.
+
+  actual_labels = Y
+
+  def infer_cluster_labels(kmeans, actual_labels):
+    inferred_labels = {}
+
+    for i in range(kmeans.n_clusters):
+
+        # find index of points in cluster
+        labels = []
+        index = np.where(kmeans.labels_ == i)
+
+        # append actual labels for each point in cluster
+        labels.append(Y[index])
+
+        # determine most common label
+        if len(labels[0]) == 1:
+            counts = np.bincount(labels[0])
+        else:
+            counts = np.bincount(np.squeeze(labels))
+
+        # assign the cluster to a value in the inferred_labels dictionary
+        if np.argmax(counts) in inferred_labels:
+            # append the new number to the existing array at this slot
+            inferred_labels[np.argmax(counts)].append(i)
+        else:
+            # create a new array in this slot
+            inferred_labels[np.argmax(counts)] = [i]
+
+        #print(labels)
+        #print('Cluster: {}, label: {}'.format(i, np.argmax(counts)))
+        
+    return inferred_labels
+
+  def infer_data_labels(X_labels, cluster_labels):
+    # empty array of len(X)
+    predicted_labels = np.zeros(len(X_labels)).astype(np.uint8)
+
+    for i, cluster in enumerate(X_labels):
+        for key, value in cluster_labels.items():
+            if cluster in value:
+                predicted_labels[i] = key
+                
+    return predicted_labels
+
+  # test the infer_cluster_labels() and infer_data_labels() functions
+
+  cluster_labels = infer_cluster_labels(kmeans, Y)
+  X_clusters = kmeans.predict(X)
+  predicted_labels = infer_data_labels(X_clusters, cluster_labels)
+  print (predicted_labels[:20])
+  print (Y[:20])
+  return predicted_labels
+
+
+def compare_clusterings(ypred_1=None,ypred_2=None):
+  # refer to sklearn documentation for homogeneity, completeness and vscore
+  from keras.datasets import mnist
+  from sklearn.metrics import homogeneity_score, completeness_score, v_measure_score
+  (x_train, y_train), (x_test, y_test) = mnist.load_data()
+  kmeans = build_kmeans()
+  X = x_train.reshape(len(x_train),-1)
+  Y = y_train
+  X = X.astype(float) / 255.
+
+  labels_true = Y
+  labels_pred = assign_kmeans()
+  h,c,v = 0,0,0 # you need to write your code to find proper values
+  h = homogeneity_score(labels_true, labels_pred)
+  c = completeness_score(labels_true, labels_pred)
+  v = v_measure_score(labels_true, labels_pred)
+  return h,c,v
