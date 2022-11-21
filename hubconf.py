@@ -58,43 +58,84 @@ from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_sc
 from sklearn.model_selection import GridSearchCV
 
 def build_lr_model(X=None, y=None):
-  lr_model = LogisticRegression()
-  lr_model.fit(X, y)
+  from sklearn.linear_model import LogisticRegression
+  lr_model = LogisticRegression(random_state=0).fit(X, y)
+  # write your code...
+  # Build logistic regression, refer to sklearn
   return lr_model
 
 def build_rf_model(X=None, y=None):
-  rf_model=RandomForestClassifier()
-  rf_model.fit(X, y)
+  from sklearn.ensemble import RandomForestClassifier
+  rf_model = RandomForestClassifier(max_depth=4, random_state=0).fit(X, y)
+  # write your code...
+  # Build Random Forest classifier, refer to sklearn
   return rf_model
 
-def get_metrics(model=None,X=None,y=None):
-  y_pred = model.predict(X)
-  acc = accuracy_score(y, y_pred)
-  prec = precision_score(y, y_pred)
-  rec = recall_score(y, y_pred)
-  f1 = f1_score(y, y_pred)
-  auc = roc_auc_score(y, y_pred)
+def get_metrics(model1=None,X=None,y=None):
+  from sklearn.metrics import precision_recall_fscore_support
+  from sklearn import metrics
+  # Obtain accuracy, precision, recall, f1score, auc score - refer to sklearn metrics
+  y_pred = model1.predict(X)
+  acc, prec, rec, f1 = precision_recall_fscore_support(y,y_pred)
+  y_pred_proba = model1.predict_proba(X)
+  fpr, tpr, thresholds = metrics.roc_curve(y, y_pred, pos_label=2)
+  auc = metrics.auc(fpr, tpr)
+  # write your code here...
   return acc, prec, rec, f1, auc
 
 def get_paramgrid_lr():
-  lr_param_grid = {'penalty': ['l1', 'l2'],'C':[0.001,.009,0.01,.09,1,5,10,25]}
+  
+  from sklearn.model_selection import GridSearchCV
+  from sklearn.linear_model import LogisticRegression
+  # you need to return parameter grid dictionary for use in grid search cv
+  # penalty: l1 or l2
+  lr_param_grid = grid={"penalty":["l1","l2"]}# l1 lasso l2 ridge
+  # refer to sklearn documentation on grid search and logistic regression
+  # write your code here...
+  
   return lr_param_grid
 
 def get_paramgrid_rf():
-  rf_param_grid = {'bootstrap': [True, False],
-                  'max_depth': [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, None],
-                  'max_features': ['auto', 'sqrt'],
-                  'min_samples_leaf': [1, 2, 4],
-                  'min_samples_split': [2, 5, 10],
-                  'n_estimators': [200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000]}
+  from sklearn.model_selection import GridSearchCV
+  from sklearn.ensemble import RandomForestClassifier
+  # you need to return parameter grid dictionary for use in grid search cv
+  # n_estimators: 1, 10, 100
+  # criterion: gini, entropy
+  # maximum depth: 1, 10, None  
+  rf_param_grid = {'n_estimators': [1, 10, 100], 'max_depth': [1, 10, None], 'criterion':['gini', 'entropy']}
+  # refer to sklearn documentation on grid search and random forest classifier
+  # write your code here...
   return rf_param_grid
 
-def perform_gridsearch_cv_multimetric(model=None, param_grid=None, cv=5, X=None, y=None, metrics=['accuracy','roc_auc']):
+def perform_gridsearch_cv_multimetric(model1=None, param_grid=None, cv=5, X=None, y=None, metrics=['accuracy','roc_auc']):
   
-  top1_scores = []
-  for score in metrics:
-     grid_search_cv = GridSearchCV(model, param_grid, scoring=score)
-     grid_search_cv.fit(X, y)
-     top1_scores(grid_search_cv.best_score_)
+  from sklearn.model_selection import GridSearchCV
+  from sklearn.linear_model import LogisticRegression
+  from sklearn.ensemble import RandomForestClassifier
+  import math
+  # X = Xtrain, y = ytrain
+
+  # you need to invoke sklearn grid search cv function
+  # refer to sklearn documentation
+  # the cv parameter can change, ie number of folds  
   
-  return top1_scores
+  # metrics = [] the evaluation program can change what metrics to choose
+  grid_search_cv = GridSearchCV(model1, param_grid, cv=cv)
+  grid_search_cv.fit(X, y)
+
+  # create a grid search cv object
+  # fit the object on X and y input above
+  # write your code here...\
+
+
+  # metric of choice will be asked here, refer to the-scoring-parameter-defining-model-evaluation-rules of sklearn documentation
+  
+  # refer to cv_results_ dictonary
+  # return top 1 score for each of the metrics given, in the order given in metrics=... list
+  
+  return [grid_search_cv.best_score_]
+
+def loss_fn(y_pred, y_actual):
+  v = -(y_actual * torch.log(y_pred + 0.0001))
+  v = torch.sum(v)
+  return v
