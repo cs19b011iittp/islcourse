@@ -21,32 +21,33 @@ from sklearn.metrics import homogeneity_score
 from sklearn.metrics import completeness_score
 from sklearn.metrics.cluster import v_measure_score
 
+from sklearn.datasets import make_blobs, make_circles
+from sklearn.cluster import KMeans
+from sklearn.metrics import homogeneity_completeness_v_measure
+
+
 def get_data_blobs(n_points=100):
   X, y = make_blobs(n_samples=n_points, centers=3, n_features=2,random_state=0)
-  return X,
-
+  return X,y
+ 
 def get_data_circles(n_points=100):
   X, y = make_circles(n_samples=n_points, random_state=0, factor=0.8)
   return X,y
-
-def get_data_mnist():
-  X, y = load_digits(return_X_y=True, as_frame=True)
-  return X,y
-
+ 
 def build_kmeans(X=None,k=10):
-  
-  km = skl_cluster.KMeans(n_clusters=k, random_state=0).fit(X)
+  km = KMeans(n_clusters=k, random_state=0).fit(X)
   return km
-
+ 
 def assign_kmeans(km=None,X=None):
   ypred = km.predict(X)
   return ypred
-
+ 
 def compare_clusterings(ypred_1=None,ypred_2=None):
-  h = homogeneity_score(ypred_1, ypred_2)
-  c = completeness_score(ypred_1, ypred_2)
-  v = v_measure_score(ypred_1, ypred_2)
+  # refer to sklearn documentation for homogeneity, completeness and vscore
+  h,c,v = 0,0,0 # you need to write your code to find proper values
+  h,c,v = homogeneity_completeness_v_measure(ypred_1, ypred_2, beta=1.0)
   return h,c,v
+
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
@@ -107,4 +108,3 @@ def perform_gridsearch_cv_multimetric(model=None, param_grid=None, cv=5, X=None,
   top1_scores = []
   
   return top1_scores
-
