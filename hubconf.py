@@ -38,8 +38,12 @@ def get_data_mnist():
   return X,y
 
 def build_kmeans(X=None,k=10):
-  km = skl_cluster.KMeans(n_clusters=10)
-  km.fit(X)
+  
+  # k is a variable, calling function can give a different number
+  # Refer to sklearn KMeans method
+  km =  skl_cluster.KMeans(n_clusters=k, random_state=0,init='k-means++')
+  km = km.fit(X)
+  # write your code ...
   return km
 
 def assign_kmeans(km=None,X=None):
