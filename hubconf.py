@@ -48,3 +48,49 @@ def get_data_circles(n_points=100):
   plt.scatter(circles[:, 0], circles[:, 1], s=15, linewidth=0, c=labels, cmap='flag')
   plt.show()
   return circles, circles_clusters
+
+
+def get_data_mnist():
+  pass
+  # write your code here
+  # Refer to sklearn data sets
+  from keras.datasets import mnist
+
+  (x_train, y_train), (x_test, y_test) = mnist.load_data()
+  X = (x_train, x_test)
+  y = (y_train, y_test)
+  print("Training Data: {}".format(x_train.shape))
+  print("Training Labels: {}".format(y_train.shape))
+  print("Testing Data: {}".format(x_test.shape))
+  print("Testing Labels: {}".format(y_test.shape))
+  return X,y
+
+
+def build_kmeans(X=None,k=10):
+  pass
+  from sklearn.cluster import MiniBatchKMeans
+  from keras.datasets import mnist
+
+  (x_train, y_train), (x_test, y_test) = mnist.load_data()
+  X = x_train.reshape(len(x_train),-1)
+  Y = y_train
+
+  # normalize the data to 0 - 1
+
+  X = X.astype(float) / 255.
+
+  print(X.shape)
+  print(X[0].shape)
+  n_digits = len(np.unique(y_test))
+  print(n_digits)
+
+  # Initialize KMeans model
+
+  kmeans = MiniBatchKMeans(n_clusters = n_digits)
+
+  # Fit the model to the training data
+
+  kmeans.fit(X)
+
+  kmeans.labels_
+  return kmeans
